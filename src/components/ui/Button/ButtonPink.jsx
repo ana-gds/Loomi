@@ -1,4 +1,4 @@
-export function Button({
+export function ButtonPink({
     label,
     onClick,
     type = 'button',
