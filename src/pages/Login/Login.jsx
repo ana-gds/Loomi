@@ -24,7 +24,7 @@ export function Login() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-secundario">
+        <div className="min-h-screen flex items-center justify-center bg-secundario ">
             <form
                 onSubmit={handleLogin}
                 className="w-full max-w-sm p-6 rounded-xl bg-fundo"

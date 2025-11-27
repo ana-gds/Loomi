@@ -1,115 +1,3 @@
-#root {
-
-}
-
-
-.prompt-thin {
-  font-family: "Prompt", sans-serif;
-  font-weight: 100;
-  font-style: normal;
-}
-
-.prompt-extralight {
-  font-family: "Prompt", sans-serif;
-  font-weight: 200;
-  font-style: normal;
-}
-
-.prompt-light {
-  font-family: "Prompt", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.prompt-regular {
-  font-family: "Prompt", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.prompt-medium {
-  font-family: "Prompt", sans-serif;
-  font-weight: 500;
-  font-style: normal;
-}
-
-.prompt-semibold {
-  font-family: "Prompt", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-}
-
-.prompt-bold {
-  font-family: "Prompt", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.prompt-extrabold {
-  font-family: "Prompt", sans-serif;
-  font-weight: 800;
-  font-style: normal;
-}
-
-.prompt-black {
-  font-family: "Prompt", sans-serif;
-  font-weight: 900;
-  font-style: normal;
-}
-
-.prompt-thin-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 100;
-  font-style: italic;
-}
-
-.prompt-extralight-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 200;
-  font-style: italic;
-}
-
-.prompt-light-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 300;
-  font-style: italic;
-}
-
-.prompt-regular-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.prompt-medium-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 500;
-  font-style: italic;
-}
-
-.prompt-semibold-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 600;
-  font-style: italic;
-}
-
-.prompt-bold-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 700;
-  font-style: italic;
-}
-
-.prompt-extrabold-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 800;
-  font-style: italic;
-}
-
-.prompt-black-italic {
-  font-family: "Prompt", sans-serif;
-  font-weight: 900;
-  font-style: italic;
-}
 
 
 @font-face {
@@ -125,6 +13,37 @@
   font-size: 40px;
   text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
   1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+}
 
+.hero-title {
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  font-size: 40px;
+  line-height: 48px;
+}
+
+.hero-subtitle {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 27px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  z-index: 0; /* importante para o -1 funcionar bem */
+
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/src/assets/imgs/Hero/IMG_7616.jpeg') center/cover no-repeat;
+  opacity: 0.20; /* controla a transparência da imagem */
+  pointer-events: none;
+  z-index: -1;  /* fica atrás do conteúdo */
 
 }

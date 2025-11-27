@@ -11,8 +11,8 @@ export function Searchbar({
     return (
         <>
             <div className={`flex items-center shadow-sm shadow-color-texto-principal
-            rounded-2xl px-4 py-4 bg-fundo ${ClassNames}`} {...rest}>
-                <i className="bi bi-search text-texto-secundario mr-2"></i>
+            rounded-2xl px-2 py-2 bg-fundo ${ClassNames}`} {...rest}>
+                <i className="bi bi-search text-texto-secundario ms-1"></i>
                 <input
                     type={type}
                     placeholder={placeholder}

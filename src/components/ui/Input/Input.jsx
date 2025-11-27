@@ -10,13 +10,13 @@ export function InputL({
 }) {
 
   return (
-      <div className="w-full max-w-md px-4">
+      <div className="w-full max-w-md px-4 ">
         <Field>
           <Label className="text-medium font-medium text-texto-principal">
             {label}
           </Label>
 
-          <div className="relative mt-3">
+          <div className="relative mt-1">
             {icon && (
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-texto-secundario/50">
               {icon}
