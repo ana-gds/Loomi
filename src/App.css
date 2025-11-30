@@ -30,6 +30,14 @@
   line-height: 27px;
 }
 
+.section-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 30px;
+}
+
 .hero {
   position: relative;
   overflow: hidden;
