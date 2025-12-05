@@ -1,4 +1,4 @@
-import {Searchbar} from "../../ui/SearchBar/SearchBar.jsx";
+import {Searchbar} from "../../../components/ui/SearchBar/SearchBar.jsx";
 
 export function HeroSearch() {
     return (

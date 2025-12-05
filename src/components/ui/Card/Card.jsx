@@ -1,7 +1,6 @@
 export function Card ({
     title = '',
     rating = '',
-    duration = '',
     year  = '',
     poster= '',
     ClassNames = '',
@@ -9,18 +8,19 @@ export function Card ({
                              }) {
     return (
         <>
-            <div className="mb-4">
-                <div className={`w-48 h-80 bg-white rounded-2xl shadow-md ${ClassNames}`} {...rest}>
+            <div className="mb-3">
+                <div className={`w-52 h-82 bg-white rounded-2xl shadow-md ${ClassNames}`} {...rest}>
                     <img
                         src={poster}
                         alt={title}
-                        className="h-64 object-cover"
+                        className="h-64 object-cover w-full rounded-t-2xl"
                     />
-                    <div className="p-4">
-                        <h3 className="text-lg font-semibold text-texto-principal mb-2">{title}</h3>
-                        <p className="text-sm text-texto-secundario mb-1">Ano: {year}</p>
-                        <p className="text-sm text-texto-secundario mb-1">Duração: {duration}</p>
-                        <p className="text-sm text-texto-secundario">Classificação: {rating}</p>
+                    <div className="p-4 pt-2">
+                        <h3 className="text-lg font-semibold text-texto-principal mb-1 truncate">{title}</h3>
+                        <div className="flex justify-between">
+                        <p className="text-sm text-texto-secundario mb-2"><i className="bi bi-calendar2 text-principal"></i> {year}</p>
+                            <p className="text-sm text-texto-secundario"><i className="bi bi-star-fill text-principal"></i> {rating}</p>
+                        </div>
                     </div>
                 </div>
             </div>
