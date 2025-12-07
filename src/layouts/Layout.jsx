@@ -1,13 +1,11 @@
-import {NavBar} from "../components/sections/NavBar/NavBar.jsx";
-import {HeroSearch} from "../pages/Home/components/HeroSearch.jsx";
-import {HomeSection} from "../pages/Home/components/HomeSection.jsx";
+import { Outlet } from "react-router-dom";
+import { NavBar } from "../components/sections/NavBar/NavBar.jsx";
 
 export function Layout() {
     return (
         <>
-            <NavBar/>
-                <HeroSearch/>
-                <HomeSection/>
+            <NavBar />
+            <Outlet />
         </>
-    )
+    );
 }

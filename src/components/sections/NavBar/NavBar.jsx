@@ -29,7 +29,7 @@ export function NavBar() {
                         onClick={() => setOpenProfile((prev) => !prev)}
                         className="relative me-20 z-20"
                     >
-                        <i className="bi bi-person-circle text-principal text-4xl mb-0.5"></i>
+                        <i className="bi bi-person-circle text-principal text-4xl mb-0.5 cursor-pointer"></i>
 
                         {openProfile && (
                             <div className="absolute right-0 mt-2 w-40 bg-fundo rounded-lg shadow-lg py-2">

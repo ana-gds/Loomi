@@ -1,5 +1,5 @@
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_API_KEY = 'd2f1f1157371618f6450aee1f2fd50b7';
+export const TMDB_API_KEY = 'd2f1f1157371618f6450aee1f2fd50b7';
 
 // Helper para construir URL
 function buildUrl(endpoint) {
