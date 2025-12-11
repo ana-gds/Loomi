@@ -10,7 +10,7 @@ export function ButtonPink({
             type={type}
             onClick={onClick}
             className={`text-base bg-gradient-to-t from-principal to-gradiente text-fundo 
-            rounded-xl shadow-sm shadow-color-texto-principal px-4 py-2 ${ClassNames}`}
+            rounded-xl shadow-sm shadow-color-texto-principal px-4 py-2 cursor-pointer ${ClassNames}`}
             {...rest}
         >
             {label}

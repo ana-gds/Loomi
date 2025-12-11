@@ -8,7 +8,7 @@ import { TMDB_API_KEY } from "../../../api/tmdb";
 
 
 // Componente que mostra os top 10 filmes da semana
-export function HomeSection() {
+export function Top10Movies() {
     // Estado para armazenar a lista de filmes retornada pela API
     const [movies, setMovies] = useState([]);
 

@@ -60,5 +60,5 @@ export function getMovieDetails(id) {
 
 // PESQUISA
 export function searchMovies(query) {
-    return tmdbFetch(`search/movie&query=${query}`);
+    return tmdbFetch(`search/movie?query=${query}`);
 }

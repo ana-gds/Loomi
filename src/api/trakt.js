@@ -3,65 +3,41 @@ export const TRAKT_CLIENT_ID =
 
 export async function getRelatedContent(tmdbId) {
     try {
-        // 1. Lookup TMDB -> descobrir se é movie ou show
-        const lookupRes = await fetch(
-            `https://api.trakt.tv/search/tmdb/${tmdbId}`,
+        // 1. Lookup TMDB ID → descobrir o Trakt ID REAL do filme
+        const lookup = await fetch(
+            `https://api.trakt.tv/search/tmdb/${tmdbId}?type=movie`,
             {
                 headers: {
                     "trakt-api-key": TRAKT_CLIENT_ID,
                     "trakt-api-version": "2",
-                    "Content-Type": "application/json",
                 },
             }
         );
 
-        if (!lookupRes.ok) {
-            console.error("Lookup TMDB -> Trakt falhou:", lookupRes.status);
-            return [];
-        }
+        const data = await lookup.json();
+        const movie = data[0]?.movie;
 
-        const lookupData = await lookupRes.json();
-        if (!lookupData.length) {
-            console.warn("TMDB ID não encontrado na Trakt.");
-            return [];
-        }
+        if (!movie?.ids?.trakt) return [];
 
-        // A Trakt já devolve o type: "movie" ou "show"
-        const item = lookupData[0];
-        const type = item.type;  // "movie" ou "show"
+        const traktId = movie.ids.trakt;
 
-        const traktId =
-            type === "movie" ? item.movie.ids.trakt : item.show.ids.trakt;
-
-        // 2. Endpoint correto
-        const endpoint =
-            type === "movie"
-                ? `movies/${traktId}/related`
-                : `shows/${traktId}/related`;
-
-        // 3. Buscar conteúdo relacionado
-        const relatedRes = await fetch(
-            `https://api.trakt.tv/${endpoint}`,
+        // 2. Buscar recomendações de filmes
+        const res = await fetch(
+            `https://api.trakt.tv/movies/${traktId}/related`,
             {
                 headers: {
                     "trakt-api-key": TRAKT_CLIENT_ID,
                     "trakt-api-version": "2",
-                    "Content-Type": "application/json",
                 },
             }
         );
 
-        if (!relatedRes.ok) {
-            console.error("Erro ao pedir recomendações:", relatedRes.status);
-            return [];
-        }
+        const related = await res.json();
 
-        const related = await relatedRes.json();
-
-        return related;
-
+        // 3. Garantir que só ficam items com TMDB ID válido
+        return related.filter((r) => r?.ids?.tmdb);
     } catch (err) {
-        console.error("Erro inesperado em getRelatedContent:", err);
+        console.error("Erro em getRelatedContent:", err);
         return [];
     }
 }

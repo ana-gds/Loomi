@@ -2,17 +2,26 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../../firebase/firebase.js";
+
 import { ButtonPink } from "../../ui/Button/ButtonPink.jsx";
+
+/*
+  NavBar:
+ - controla o estado do menu de perfil (openProfile)
+ - permite terminar sessão usando Firebase Auth
+ - usa useNavigate para redirecionar após o logout
+*/
 
 export function NavBar() {
     const [openProfile, setOpenProfile] = useState(false);
     const navigate = useNavigate();
 
+    // Faz logout do usuário e navega para /login
     async function handleLogout() {
         try {
             await signOut(auth);
             navigate("/login");
-        } catch (err) {
+        } catch {
             alert("Erro ao terminar sessão.");
         }
     }
@@ -20,9 +29,9 @@ export function NavBar() {
     return (
         <>
             <header className="bg-secundario min-h-20 flex items-center justify-between shadow-sm shadow-color-texto-principal">
-                <h1 className="logo inline-block ms-20">LOOMI</h1>
+                <h1 className="logo inline-block ms-20 cursor-pointer" onClick={() => navigate("/")}>LOOMI</h1>
                 <div className="flex items-center gap-7 relative">
-                    <ButtonPink label={"Favoritos"} />
+                    <ButtonPink label="Favoritos" onClick={() => navigate("/favoritos")} />
 
                     <button
                         type="button"

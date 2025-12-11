@@ -5,20 +5,18 @@ import {MovieSummary} from "./components/MovieSummary.jsx";
 import {MovieInfo} from "./components/MovieInfo.jsx";
 import {MovieStreaming} from "./components/MovieStreaming.jsx";
 import {MovieCast} from "./components/MovieCast.jsx";
-import {getRelatedContent} from "../../api/trakt.js";
 import {Recommendations} from "./components/Recomendations.jsx";
+import {MovieExtraInfo} from "./components/MovieExtraInfo.jsx";
+
+import {getRelatedContent} from "../../api/trakt.js";
 import { TMDB_API_KEY } from "../../api/tmdb";
+import { getOMDbById } from "../../api/omdb.js";
+import { getYoutubeTrailer } from "../../api/youtube.js";
 
 
 export function MovieDetail() {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
-    const [trailerKey, setTrailerKey] = useState(null);
-    const [credits, setCredits] = useState(null);
-    const [providers, setProviders] = useState(null);
-    const [cast, setCast] = useState([]);
-    const [related, setRelated] = useState([]);
-
 
     useEffect(() => {
         async function fetchMovie() {
@@ -32,27 +30,40 @@ export function MovieDetail() {
         fetchMovie();
     }, [id]);
 
+    const [trailerKey, setTrailerKey] = useState(null);
+
+
     useEffect(() => {
         async function fetchTrailer() {
+            // Primeiro tenta TMDB
             const res = await fetch(
                 `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${TMDB_API_KEY}&language=pt-PT`
             );
-
             const data = await res.json();
 
-            // encontrar um trailer do YouTube
             const trailer = data.results.find(
-                (video) =>
-                    video.type === "Trailer" &&
-                    video.site === "YouTube"
+                (video) => video.type === "Trailer" && video.site === "YouTube"
             );
 
-            setTrailerKey(trailer?.key || null);
+            if (trailer) {
+                setTrailerKey(trailer.key);
+                return;
+            }
+
+            // Se não encontrou, usar YouTube
+            if (movie?.title) {
+                const youtubeKey = await getYoutubeTrailer(movie.title);
+                setTrailerKey(youtubeKey || null);
+            }
         }
 
         fetchTrailer();
-    }, [id]);
+    }, [id, movie]);
 
+
+
+
+    const [credits, setCredits] = useState(null);
 
     useEffect(() => {
         async function fetchCredits() {
@@ -65,6 +76,9 @@ export function MovieDetail() {
 
         fetchCredits();
     }, [id]);
+
+
+    const [providers, setProviders] = useState(null);
 
     useEffect(() => {
         async function fetchProviders() {
@@ -82,6 +96,8 @@ export function MovieDetail() {
         fetchProviders();
     }, [id]);
 
+
+    const [cast, setCast] = useState([]);
 
     useEffect(() => {
         async function fetchMovie() {
@@ -104,6 +120,8 @@ export function MovieDetail() {
         fetchCast();
     }, [id]);
 
+    const [related, setRelated] = useState([]);
+
     useEffect(() => {
         async function fetchRelated() {
             const data = await getRelatedContent(id); // usa a nova função
@@ -112,6 +130,18 @@ export function MovieDetail() {
 
         fetchRelated();
     }, [id]);
+
+    const [omdb, setOmdb] = useState(null);
+
+    useEffect(() => {
+        async function loadOMDb() {
+            if (!movie?.imdb_id) return;
+            const data = await getOMDbById(movie.imdb_id);
+            setOmdb(data);
+        }
+
+        loadOMDb();
+    }, [movie]);
 
 
 
@@ -122,16 +152,22 @@ export function MovieDetail() {
             <MovieTrailer
                 backdrop={movie.backdrop_path}
                 title={movie.title}
-                rating={movie.vote_average}
+                rating={omdb?.imdbRating}
                 trailerKey={trailerKey}
+                movieId={movie.id}
+                movieTitle={movie.title}
+                moviePoster={movie.poster_path}
             />
 
-            <div className="px-20 mt-20 grid grid-cols-10 items-start">
+
+            <div className="px-20 mt-20 grid grid-cols-10 items-stretch">
                 <div className="col-span-3">
-                <MovieInfo movie={movie} credits={credits} />
+                    <MovieInfo movie={movie} credits={credits} />
                 </div>
-                <div className="col-span-7 ps-12">
-                <MovieSummary overview={movie.overview} />
+
+                <div className="col-span-7 ps-12 flex flex-col justify-between h-full">
+                    <MovieSummary overview={movie.overview} />
+                    <MovieExtraInfo omdb={omdb} />
                 </div>
             </div>
 
@@ -140,11 +176,11 @@ export function MovieDetail() {
             </div>
 
             <div className="px-20 mt-10 mb-20">
-            <MovieStreaming providers={providers} />
-                </div>
+                <MovieStreaming providers={providers} />
+            </div>
 
             <div className="px-20 mt-10 mb-20">
-            <Recommendations related={related} />
+                <Recommendations related={related} />
             </div>
 
         </>

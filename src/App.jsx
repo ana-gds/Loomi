@@ -7,6 +7,7 @@ import { Layout } from './layouts/Layout.jsx';
 import { Home } from './pages/Home/Home.jsx';
 import { MovieDetail } from './pages/MovieDetail/MovieDetail.jsx';
 import { SetupProfile } from "./pages/SetupProfile/SetupProfile";
+import { Favorites } from './pages/Favorites/Favorites.jsx';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Home />} />
                     <Route path="movie/:id" element={<MovieDetail />} />
+                    <Route path="/favoritos" element={<Favorites/>} />
                 </Route>
 
                 <Route path="/login" element={<Login />} />
