@@ -8,12 +8,13 @@ import {
     collection
 } from "firebase/firestore";
 
-export async function addFavorite(userId, movie) {
+export async function addFavorite(userId, movieId) {
     await setDoc(
-        doc(db, "users", userId, "favorites", movie.id.toString()),
-        movie
+        doc(db, "users", userId, "favorites", movieId.toString()),
+        { id: movieId }
     );
 }
+
 
 export async function removeFavorite(userId, movieId) {
     await deleteDoc(

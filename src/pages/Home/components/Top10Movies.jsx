@@ -30,7 +30,7 @@ export function Top10Movies() {
     return (
         <section className="ms-20 mt-16">
             <SectionTitle title={'Top 10 da semana'}/>
-            <PinkDiv/>
+            <PinkDiv width={'w-40'}/>
             <div className="flex gap-6 overflow-x-scroll pb-4 pt-2">
                 {movies.slice(0, 10).map((movie) => (
                     <Link key={movie.id} to={`/movie/${movie.id}`}>

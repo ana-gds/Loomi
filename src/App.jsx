@@ -8,6 +8,8 @@ import { Home } from './pages/Home/Home.jsx';
 import { MovieDetail } from './pages/MovieDetail/MovieDetail.jsx';
 import { SetupProfile } from "./pages/SetupProfile/SetupProfile";
 import { Favorites } from './pages/Favorites/Favorites.jsx';
+import { SearchResults } from "./pages/SearchResults/SearchResults.jsx";
+
 
 function App() {
 
@@ -18,6 +20,7 @@ function App() {
                     <Route index element={<Home />} />
                     <Route path="movie/:id" element={<MovieDetail />} />
                     <Route path="/favoritos" element={<Favorites/>} />
+                    <Route path="/search" element={<SearchResults />} />
                 </Route>
 
                 <Route path="/login" element={<Login />} />

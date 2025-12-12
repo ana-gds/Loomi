@@ -1,5 +1,5 @@
-export function PinkDiv () {
+export function PinkDiv({ width = "" }) {
     return (
-        <div className="w-40 h-1.5 bg-principal rounded-full mt-2 mb-6"></div>
+        <div className={`h-1.5 bg-principal rounded-full mt-2 mb-6 ${width}`}></div>
     );
 }

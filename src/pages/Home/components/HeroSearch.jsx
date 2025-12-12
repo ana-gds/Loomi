@@ -49,6 +49,16 @@ export function HeroSearch() {
     }
 
 
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        if (!query.trim()) return;
+
+        navigate(`/search?q=${encodeURIComponent(query)}`);
+    }
+
+
+
     return (
         <section className="hero text-center bg-gradient-to-t from-fundo to-secundario ">
             <p className="hero-title font-normal text-texto-principal pt-20">
@@ -66,6 +76,7 @@ export function HeroSearch() {
                     placeholder="Procura por filmes..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    onSubmit={handleSubmit}
                 />
 
                 {/* Dropdown de sugestões */}

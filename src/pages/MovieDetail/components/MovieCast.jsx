@@ -1,4 +1,5 @@
 import {SectionTitle} from "../../../components/ui/Title/SectionTitle.jsx";
+import {PinkDiv} from "../../../components/ui/Divs/PinkDiv.jsx";
 
     // Base URL para imagens do TMDB (tamanho w185)
     const IMG_BASE = "https://image.tmdb.org/t/p/w185";
@@ -27,7 +28,6 @@ import {SectionTitle} from "../../../components/ui/Title/SectionTitle.jsx";
         return (
             <div className="mt-16">
                 <SectionTitle title={'Elenco'}/>
-
                 {/* Lista de atores */}
                 <div className="flex gap-6 overflow-x-auto pb-4 pt-4">
                     {sortedCast.slice(0, 12).map((actor) => (

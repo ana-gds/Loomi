@@ -4,14 +4,14 @@ import { useAuth } from "../../../firebase/AuthContext";
 import { addFavorite, removeFavorite, isFavorite } from "../../../firebase/favorites";
 
 export function MovieTrailer({
-                                 backdrop,
-                                 title,
-                                 rating,
-                                 trailerKey,
-                                 movieId,
-                                 movieTitle,
-                                 moviePoster
-                             }) {
+       backdrop,
+       title,
+       rating,
+       trailerKey,
+       movieId,
+       movieTitle,
+       moviePoster
+}) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
@@ -32,7 +32,6 @@ export function MovieTrailer({
             setTimeout(() => setShowToast(false), 2000);
         } catch (err) {
             console.error("Erro ao copiar o link:", err);
-            alert("Não foi possível copiar o link.");
         }
     }
 
@@ -66,11 +65,7 @@ export function MovieTrailer({
             await removeFavorite(user.uid, movieId);
             setFav(false);
         } else {
-            await addFavorite(user.uid, {
-                id: movieId,
-                title: movieTitle,
-                poster_path: moviePoster
-            });
+            await addFavorite(user.uid, movieId);
             setFav(true);
         }
     }

@@ -1,4 +1,4 @@
-export const TRAKT_CLIENT_ID =
+export const TRAKT_API_KEY =
     "fcaf9c1971de00311c62e95e6982e934c1d87e7872d1ff8ff7c9a24cac262a7d";
 
 export async function getRelatedContent(tmdbId) {
@@ -8,7 +8,7 @@ export async function getRelatedContent(tmdbId) {
             `https://api.trakt.tv/search/tmdb/${tmdbId}?type=movie`,
             {
                 headers: {
-                    "trakt-api-key": TRAKT_CLIENT_ID,
+                    "trakt-api-key": TRAKT_API_KEY,
                     "trakt-api-version": "2",
                 },
             }
@@ -26,7 +26,7 @@ export async function getRelatedContent(tmdbId) {
             `https://api.trakt.tv/movies/${traktId}/related`,
             {
                 headers: {
-                    "trakt-api-key": TRAKT_CLIENT_ID,
+                    "trakt-api-key": TRAKT_API_KEY,
                     "trakt-api-version": "2",
                 },
             }

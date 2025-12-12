@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getMovieDetails } from "../../../api/tmdb.js";
 import { Card } from "../../../components/ui/Card/Card.jsx";
 import { SectionTitle } from "../../../components/ui/Title/SectionTitle.jsx";
+import {PinkDiv} from "../../../components/ui/Divs/PinkDiv.jsx";
 
 export function Recommendations({ related }) {
     const [movies, setMovies] = useState([]);
@@ -34,6 +35,7 @@ export function Recommendations({ related }) {
     return (
         <div className="mt-16">
             <SectionTitle title="Recomendações com base neste filme" />
+            <PinkDiv width={'w-40'}/>
 
             <div className="flex gap-6 overflow-x-auto pb-4 pt-2">
                 {movies.slice(0, 6).map((movie) => (
