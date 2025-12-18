@@ -1,17 +1,19 @@
 export function Card ({
-    title = '',
-    rating = '',
-    year  = '',
-    poster= '',
-    ClassNames = '',
+    title = null,
+    rating = null,
+    year  = null,
+    poster= null,
+    ClassNames = null,
     ...rest
-                             }) {
+}) {
+    const posterSrc = poster || null; // evitar enviar string vazia para o atributo src
+
     return (
         <>
             <div className="mb-3">
                 <div className={`w-52 h-82 bg-white rounded-2xl shadow-md ${ClassNames}`} {...rest}>
                     <img
-                        src={poster}
+                        src={posterSrc}
                         alt={title}
                         className="h-64 object-cover w-full rounded-t-2xl"
                     />

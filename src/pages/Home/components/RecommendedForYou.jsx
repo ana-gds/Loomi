@@ -7,6 +7,8 @@ import { Card } from "../../../components/ui/Card/Card.jsx";
 import { Link } from "react-router-dom";
 import { TMDB_API_KEY } from "../../../api/tmdb";
 import { TRAKT_API_KEY } from "../../../api/trakt";
+import defaultPoster from "../../../assets/imgs/default-movie.png";
+
 
 // 1. Converter TMDB ID → IDs próprios da Trakt
 async function getTraktIdsFromTMDB(tmdbId) {
@@ -134,7 +136,7 @@ export function RecommendedForYou() {
                             poster={
                                 movie.poster_path
                                     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                                    : "/default-poster.png"
+                                    : defaultPoster
                             }
                             ClassNames="hover:scale-105 transition-transform"
                         />

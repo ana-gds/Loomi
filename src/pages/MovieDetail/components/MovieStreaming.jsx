@@ -1,10 +1,19 @@
 import {SectionTitle} from "../../../components/ui/Title/SectionTitle.jsx";
 
+// URL base para as imagens dos provedores de streaming
 const IMG_BASE = "https://image.tmdb.org/t/p/w200";
 
+/**
+ * Componente que mostra onde ver o filme
+ * Mostra plataformas de streaming, aluguer e compra disponíveis em Portugal
+ * @param {Object} providers - Dados dos provedores de streaming da API TMDB
+ */
+
 export function MovieStreaming({ providers }) {
+    // Extrai informações de Portugal dos provedores
     const pt = providers?.results?.PT;
 
+    // Se não há informações para Portugal, mostra mensagem
     if (!pt) {
         return (
             <div className="bg-secundario p-6 rounded-xl shadow-sm text-texto-principal">
@@ -14,17 +23,19 @@ export function MovieStreaming({ providers }) {
         );
     }
 
+    // Separa os provedores por tipo (streaming, aluguer, compra)
     const flatrate = pt.flatrate || [];
     const rent = pt.rent || [];
     const buy = pt.buy || [];
 
-    // Combinar tudo numa só lista estilo JustWatch
+    // Combina todos os provedores numa única lista com tipo identificado
     const items = [
         ...flatrate.map((p) => ({ ...p, type: "Streaming" })),
         ...rent.map((p) => ({ ...p, type: "Aluguer" })),
         ...buy.map((p) => ({ ...p, type: "Compra" })),
     ];
 
+    // Se não tiver nenhum dísponivel, mostra mensagem
     if (!items.length) {
         return (
             <div className="bg-secundario p-6 rounded-xl shadow-sm text-texto-principal">
@@ -36,22 +47,27 @@ export function MovieStreaming({ providers }) {
         );
     }
 
+    // Renderiza a lista de provedores
     return (
         <div className="bg-secundario p-6 rounded-xl shadow-sm text-texto-principal">
             <SectionTitle title={'Onde ver'} className="mb-3"/>
 
             <div className="flex flex-col gap-4">
+                {/* Itera sobre cada provedor e exibe logo + nome + tipo */}
                 {items.map((p) => (
                     <div
-                        key={p.provider_id}
+                        // Chave única: combina ID do provedor + tipo para evitar duplicatas
+                        key={`${p.provider_id}-${p.type}`}
                         className="flex items-center gap-4 bg-white/20 rounded-lg py-3"
                     >
+                        {/* Logo do provedor */}
                         <img
                             src={`${IMG_BASE}${p.logo_path}`}
                             alt={p.provider_name}
                             className="w-10 h-10 rounded-md object-cover"
                         />
 
+                        {/* Nome do provedor e tipo (Streaming/Aluguer/Compra) */}
                         <div className="flex flex-col leading-tight">
                             <span className="text-texto-principal font-medium">
                                 {p.provider_name}

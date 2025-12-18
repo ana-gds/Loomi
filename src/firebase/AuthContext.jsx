@@ -2,7 +2,12 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { auth } from './firebase';
 
-// Guarda os dados de autenticação (utilizador + estado de loading) para toda a app.
+/**
+ * AuthContext
+ * - Fornece `user` (Firebase User | null) e `loading` (quando o auth está a inicializar).
+ * - Exporta helpers `loginWithGoogle` e `logout` para serem usados pelos componentes UI.
+ */
+
 const AuthContext = createContext({ user: null, loading: true });
 const googleProvider = new GoogleAuthProvider();
 
@@ -20,10 +25,33 @@ export const AuthProvider = ({ children }) => {
         return () => unsub();
     }, []);
 
-    // Helper simples para permitir logout sem importar funções do Firebase em cada componente.
-    const logout = () => signOut(auth);
-    // Login com Google; pode ser chamado nos componentes de UI.
-    const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
+    /**
+     * logout
+     * Wrapper assíncrono para `signOut` com logging de erro.
+     * Os componentes podem `await logout()` e tratar UI localmente.
+     */
+    const logout = async () => {
+        try {
+            await signOut(auth);
+        } catch (err) {
+            console.error('Erro ao fazer logout:', err);
+            throw err;
+        }
+    };
+
+    /**
+     * loginWithGoogle
+     * Abre o popup do Google e devolve a Promise do Firebase.
+     */
+    const loginWithGoogle = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            return result;
+        } catch (err) {
+            console.error('Erro ao autenticar com Google:', err);
+            throw err;
+        }
+    };
 
     return (
         <AuthContext.Provider value={{ user, loading, logout, loginWithGoogle }}>

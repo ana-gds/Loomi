@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { auth } from "../../../firebase/firebase.js";
-
 import { ButtonPink } from "../../ui/Button/ButtonPink.jsx";
+import { useAuth } from "../../../firebase/AuthContext.jsx";
 
 /*
   NavBar:
@@ -15,11 +13,13 @@ import { ButtonPink } from "../../ui/Button/ButtonPink.jsx";
 export function NavBar() {
     const [openProfile, setOpenProfile] = useState(false);
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
 
     // Faz logout do usuário e navega para /login
     async function handleLogout() {
         try {
-            await signOut(auth);
+            await logout();
+            setOpenProfile(false);
             navigate("/login");
         } catch {
             alert("Erro ao terminar sessão.");
@@ -31,7 +31,9 @@ export function NavBar() {
             <header className="bg-secundario min-h-20 flex items-center justify-between shadow-sm shadow-color-texto-principal">
                 <h1 className="logo inline-block ms-20 cursor-pointer" onClick={() => navigate("/")}>LOOMI</h1>
                 <div className="flex items-center gap-7 relative">
-                    <ButtonPink label="Favoritos" onClick={() => navigate("/favoritos")} />
+                    {user && (
+                        <ButtonPink label="Favoritos" onClick={() => navigate("/favoritos")} />
+                    )}
 
                     <button
                         type="button"
@@ -42,13 +44,28 @@ export function NavBar() {
 
                         {openProfile && (
                             <div className="absolute right-0 mt-2 w-40 bg-fundo rounded-lg shadow-lg py-2">
-                                <button
-                                    type="button"
-                                    onClick={handleLogout}
-                                    className="w-full text-left px-4 py-2 text-texto-principal hover:bg-secundario/60"
-                                >
-                                    Terminar sessão
-                                </button>
+                                {user ? (
+                                    <button
+                                        type="button"
+                                        onClick={handleLogout}
+                                        className="w-full text-left px-4 py-2 text-texto-principal hover:bg-secundario/60
+                                    cursor-pointer transition"
+                                    >
+                                        Terminar sessão
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setOpenProfile(false);
+                                            navigate("/login");
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-texto-principal hover:bg-secundario/60
+                                    cursor-pointer transition"
+                                    >
+                                        Iniciar sessão
+                                    </button>
+                                )}
                             </div>
                         )}
                     </button>

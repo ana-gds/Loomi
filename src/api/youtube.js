@@ -2,10 +2,12 @@ const YT_API_KEY = "AIzaSyBmbhXhgbboOZX0MTTBseDN0CA39OCU9ZE";
 
 
 export async function getYoutubeTrailer(title) {
+    // Monta query do trailer usando o título recebido
     const query = `${title} trailer oficial`;
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=${encodeURIComponent(query)}&key=${YT_API_KEY}`;
 
     try {
+        // Faz request na API e retorna o primeiro videoId encontrado
         const res = await fetch(url);
         const data = await res.json();
 

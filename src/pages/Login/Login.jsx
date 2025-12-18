@@ -4,42 +4,87 @@ import { auth } from "../../firebase/firebase.js";
 import { InputL } from "../../components/ui/Input/Input.jsx";
 import { ButtonPink } from "../../components/ui/Button/ButtonPink.jsx";
 import { useNavigate } from "react-router-dom";
+import {GrayDiv} from "../../components/ui/Divs/GrayDiv.jsx";
 
-
+/**
+ * Login page
+ * - Permite autenticação por email/password
+ * - Permite autenticação via Google (popup)
+ *
+ * Estados locais:
+ * - `email`, `password`: campos do formulário
+ * - `error`: mensagem amigável para o utilizador
+ */
 export function Login() {
+    // Campos do formulário
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    // Mensagem de erro (visível no topo do form)
     const [error, setError] = useState("");
+    // Estado de submissão para evitar envios duplicados e mostrar feedback
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
-    /** ---------------------------------------------
-     * LOGIN NORMAL (EMAIL + PASSWORD)
-     * --------------------------------------------- */
+    /**
+     * handleLogin
+     * Autentica com email e password usando a SDK do Firebase Auth.
+     * Em caso de sucesso redireciona para a homepage.
+     * Em caso de erro apresenta mensagem genérica (para não expor detalhes sensíveis).
+     */
     async function handleLogin(e) {
         e.preventDefault();
+        if (loading) return; // evita múltiplos envios
         setError("");
+        setLoading(true);
+
+        // Normalizar email e remover espaços acidentais
+        const emailTrim = (email || "").trim().toLowerCase();
+        const passwordRaw = password || "";
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, emailTrim, passwordRaw);
             navigate("/");
         } catch (err) {
-            setError("Email ou palavra-passe incorretos.");
+            // Mapear alguns códigos comuns do Firebase para mensagens amigáveis
+            const code = err?.code || "";
+            if (code === "auth/wrong-password" || code === "auth/user-not-found") {
+                setError("Email ou palavra-passe incorretos.");
+            } else if (code === "auth/invalid-email") {
+                setError("Email inválido.");
+            } else if (code === "auth/too-many-requests") {
+                setError("Muitas tentativas falhadas. Tenta de novo mais tarde.");
+            } else {
+                setError("Erro ao iniciar sessão. Verifica a tua ligação e tenta de novo.");
+            }
+        } finally {
+            setLoading(false);
         }
     }
 
-    /** ---------------------------------------------
-     * LOGIN COM GOOGLE
-     * --------------------------------------------- */
+    /**
+     * handleGoogleLogin
+     * Abre um popup do Google para autenticação. Se o utilizador já tiver conta
+     * ligada ao mesmo email, o Firebase associa automaticamente.
+     */
     async function handleGoogleLogin() {
+        if (loading) return;
         setError("");
+        setLoading(true);
 
         try {
             const provider = new GoogleAuthProvider();
             await signInWithPopup(auth, provider);
             navigate("/");
         } catch (err) {
-            setError("Erro ao entrar com Google.");
+            const code = err?.code || "";
+            if (code === "auth/popup-closed-by-user") {
+                setError(""); // popup fechado pelo utilizador — não é necessário alarmar
+            } else {
+                setError("Erro ao entrar com Google. Verifica as definições do popup.");
+            }
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -51,55 +96,74 @@ export function Login() {
             >
                 <h1 className="text-texto-principal text-2xl text-center font-bold mb-6 mt-4">Iniciar sessão</h1>
 
+                {/* Exibe mensagem de erro amigável quando existe */}
                 {error && (
-                    <p className="text-red-400 text-center mb-3">{error}</p>
+                    <p role="alert" aria-live="assertive" className="text-red-400 text-center mb-3">{error}</p>
                 )}
 
-                {/* Email */}
+                {/* Campo Email controlado */}
                 <InputL
                     label="Email"
                     placeholder="O teu email"
                     icon={<i className="bi bi-envelope"></i>}
                     type="email"
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
                     required
                 />
 
-                {/* Password */}
+                {/* Campo Palavra-passe controlado */}
                 <div className="mt-4">
                     <InputL
                         label="Palavra-passe"
                         placeholder="A tua palavra-passe"
                         icon={<i className="bi bi-lock"></i>}
                         type="password"
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        autoComplete="current-password"
                         required
                     />
                 </div>
 
-                {/* Botão login */}
+                {/* Botão de submit do formulário */}
                 <div className="flex justify-center">
                     <ButtonPink
-                        label="Entrar"
+                        label={loading ? "Entrando..." : "Entrar"}
                         type="submit"
-                        ClassNames="mt-9 mb-4"
+                        disabled={loading}
+                        ClassNames="mt-9 mb-4 w-75"
                     />
                 </div>
 
-                {/* OU */}
-                <p className="text-center text-white/60 text-sm mb-2">OU</p>
+                <p className="text-center text-texto-secundario text-sm mb-2">OU</p>
 
-                {/* Google Login */}
+                {/* Autenticação via Google (popup) */}
                 <div className="flex justify-center mt-3">
                     <button
                         type="button"
                         onClick={handleGoogleLogin}
-                        className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-lg shadow-md"
+                        className="flex justify-center gap-2 bg-white text-black px-4 py-2 w-75 rounded-lg shadow-md cursor-pointer"
+                        aria-label="Entrar com Google"
+                        disabled={loading}
                     >
                         <i className="bi bi-google"></i>
-                        Entrar com Google
+                        {loading ? "A processar..." : "Entrar com Google"}
                     </button>
                 </div>
+
+                {/* Link para registo */}
+                <p className="text-center text-texto-secundario text-sm mt-6">
+                    Ainda não tens conta?{" "}
+                    <button
+                        type="button"
+                        className="text-principal underline cursor-pointer"
+                        onClick={() => navigate("/register")}
+                    >
+                        Registra-te.
+                    </button>
+                </p>
             </form>
         </div>
     );

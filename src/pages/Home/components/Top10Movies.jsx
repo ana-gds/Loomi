@@ -3,7 +3,7 @@ import {Card} from "../../../components/ui/Card/Card.jsx";
 import {PinkDiv} from "../../../components/ui/Divs/PinkDiv.jsx";
 import {SectionTitle} from "../../../components/ui/Title/SectionTitle.jsx";
 import { Link } from "react-router-dom";
-import { TMDB_API_KEY } from "../../../api/tmdb";
+import { fetchTopMovies } from "../../../api/tmdb.js";
 
 
 
@@ -12,20 +12,19 @@ export function Top10Movies() {
     // Estado para armazenar a lista de filmes retornada pela API
     const [movies, setMovies] = useState([]);
 
-    // useEffect executa a busca apenas uma vez ao montar o componente
     useEffect(() => {
-        async function fetchTopMovies() {
-            // Chamada à API do TMDB
-            const res = await fetch(
-                `https://api.themoviedb.org/3/movie/top_rated?api_key=${TMDB_API_KEY}&language=pt-PT&page=1`
-            );
-            const data = await res.json();
-            // Atualiza o estado com os resultados (array de filmes)
-            setMovies(data.results);
+        async function loadTopMovies() {
+            try {
+                const data = await fetchTopMovies();
+                setMovies(data || []);
+            } catch (error) {
+                console.error("Erro ao carregar top filmes:", error);
+            }
         }
 
-        fetchTopMovies();
-    }, []); // array de dependências vazio -> roda somente no mount
+        loadTopMovies();
+    }, []);
+
 
     return (
         <section className="ms-20 mt-16">

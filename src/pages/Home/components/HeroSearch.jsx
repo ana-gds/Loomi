@@ -1,37 +1,42 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Searchbar } from "../../../components/ui/SearchBar/SearchBar.jsx";
-import { TMDB_API_KEY } from "../../../api/tmdb.js";
+import { searchMovies } from "../../../api/tmdb.js";
+import defaultPoster from "../../../assets/imgs/default-movie.png";
 
+/**
+ * HeroSearch
+ * - Gerir o estado do input (`query`)
+ * - Fazer buscas à TMDB com debounce
+ * - Mostrar até 3 sugestões em dropdown
+ * - Navegar para detalhe ou página de resultados
+ */
 
 export function HeroSearch() {
-    const [query, setQuery] = useState("");
-    const [results, setResults] = useState([]);
+    const [query, setQuery] = useState("");      // Texto do input
+    const [results, setResults] = useState([]);  // Resultados de sugestão
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
-    // Debounce
+    // Debounce: espera 250ms após a última tecla antes de disparar a pesquisa
     useEffect(() => {
         const timer = setTimeout(() => {
             if (query.length < 2) {
                 setResults([]);
                 return;
             }
-            searchTMDB(query);
+            fetchSuggestions(query);
         }, 250);
 
         return () => clearTimeout(timer);
     }, [query]);
 
-    async function searchTMDB(text) {
+    // Faz a pesquisa na TMDB e atualiza resultados
+    async function fetchSuggestions(text) {
         try {
             setLoading(true);
-            const res = await fetch(
-                `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&language=pt-PT&query=${text}`
-            );
-            const data = await res.json();
-
+            const data = await searchMovies(text);
             setResults(data.results?.slice(0, 3) || []);
         } catch (err) {
             console.error("Erro na pesquisa TMDB:", err);
@@ -41,23 +46,17 @@ export function HeroSearch() {
         }
     }
 
-    // Quando o utilizador clica numa sugestão
     function handleSelect(item) {
         navigate(`/movie/${item.id}`);
         setQuery("");
         setResults([]);
     }
 
-
     function handleSubmit(e) {
         e.preventDefault();
-
         if (!query.trim()) return;
-
         navigate(`/search?q=${encodeURIComponent(query)}`);
     }
-
-
 
     return (
         <section className="hero text-center bg-gradient-to-t from-fundo to-secundario ">
@@ -79,7 +78,7 @@ export function HeroSearch() {
                     onSubmit={handleSubmit}
                 />
 
-                {/* Dropdown de sugestões */}
+                {/* Dropdown de sugestões: mostrado apenas quando há resultados */}
                 {results.length > 0 && (
                     <ul className="absolute w-full bg-secundario rounded-xl shadow-lg mt-3 text-left z-20 p-2">
                         {results.map((item) => (
@@ -88,11 +87,12 @@ export function HeroSearch() {
                                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 cursor-pointer transition"
                                 onClick={() => handleSelect(item)}
                             >
+                                {/* Poster (fallback para imagem genérica) */}
                                 <img
                                     src={
                                         item.poster_path || item.profile_path
                                             ? `https://image.tmdb.org/t/p/w185${item.poster_path || item.profile_path}`
-                                            : "/default-poster.png"
+                                            : defaultPoster
                                     }
                                     alt={item.title || item.name}
                                     className="w-10 h-14 object-cover rounded"
