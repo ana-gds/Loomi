@@ -3,8 +3,6 @@
 /**
  * Componente que exibe informações extras sobre o filme
  * Mostra prémios recebidos e classificação etária obtidos da API OMDB
- * @param {Object} omdb - Dados do filme da API OMDB
- * @returns {JSX.Element|null} Informações extras ou null se dados não disponíveis
  */
 
 export function MovieExtraInfo({ omdb }) {

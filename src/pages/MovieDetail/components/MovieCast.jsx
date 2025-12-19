@@ -7,8 +7,6 @@ const IMG_BASE = "https://image.tmdb.org/t/p/w185";
  * Componente que exibe o elenco de um filme
  * Renderiza até 12 atores ordenados por relevância (order ascendente)
  * com fotos, nomes e personagens
- * @param {Array} cast - Array de objetos com dados de atores da API TMDB
- * @returns {JSX.Element} Lista de atores ou mensagem de fallback
  */
 
 export function MovieCast({ cast }) {

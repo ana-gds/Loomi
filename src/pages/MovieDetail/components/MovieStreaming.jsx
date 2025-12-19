@@ -6,7 +6,6 @@ const IMG_BASE = "https://image.tmdb.org/t/p/w200";
 /**
  * Componente que mostra onde ver o filme
  * Mostra plataformas de streaming, aluguer e compra disponíveis em Portugal
- * @param {Object} providers - Dados dos provedores de streaming da API TMDB
  */
 
 export function MovieStreaming({ providers }) {
@@ -56,7 +55,7 @@ export function MovieStreaming({ providers }) {
                 {/* Itera sobre cada provedor e exibe logo + nome + tipo */}
                 {items.map((p) => (
                     <div
-                        // Chave única: combina ID do provedor + tipo para evitar duplicatas
+                        // Chave única: combina ID do provedor + tipo
                         key={`${p.provider_id}-${p.type}`}
                         className="flex items-center gap-4 bg-white/20 rounded-lg py-3"
                     >

@@ -1,9 +1,6 @@
 /**
  * Componente que exibe informações detalhadas sobre o filme
  * Mostra tipo, género, duração, data de lançamento e diretor
- * @param {Object} movie - Dados do filme da API TMDB
- * @param {Object} credits - Créditos do filme (elenco, crew)
- * @returns {JSX.Element|null} Card com informações do filme ou null se filme não existe
  */
 
 export function MovieInfo({ movie, credits }) {
@@ -11,9 +8,7 @@ export function MovieInfo({ movie, credits }) {
     if (!movie) return null;
 
     /**
-     * Converte duração em minutos para formato legível (ex: "2h 28min")
-     * @param {number} min - Duração em minutos
-     * @returns {string} Duração formatada ou "—" se não disponível
+     * Converte duração em minutos para formato legível
      */
 
     const convertRuntime = (min) => {

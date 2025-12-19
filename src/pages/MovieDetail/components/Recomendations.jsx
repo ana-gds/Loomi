@@ -10,13 +10,8 @@ const movieDetailsCache = new Map();
 
 /**
  * Recommendations
- * Carrega detalhes TMDB dos filmes relacionados e exibe um carrossel
- * - Valida IDs TMDB
- * - Faz fetch em paralelo com tratamento de erros
- * - Exibe no máximo 6 recomendações
- *
- * @param {Array} related - Array vindo de Trakt, onde cada item tem `ids.tmdb`
- */
+ * Carrega detalhes TMDB dos filmes relacionados e exibe carrossel
+  */
 
 export function Recommendations({ related }) {
     // Estado local para filmes, loading e erro
@@ -98,7 +93,7 @@ export function Recommendations({ related }) {
 
             <div className="flex gap-6 overflow-x-auto pb-4 pt-2" role="list" aria-label="Recomendações">
                 {movies.slice(0, 6).map((movie) => (
-                    // Usa movie.id como preferência para o key; fallback para título (mais seguro que empty string)
+                    // Usa movie.id como preferência para o key
                     movie.id ? (
                         <Link key={movie.id} to={`/movie/${movie.id}`} className="flex-shrink-0" role="listitem">
                             <Card
@@ -110,7 +105,7 @@ export function Recommendations({ related }) {
                             />
                         </Link>
                     ) : (
-                        // Se não houver ID TMDB, mostra o card sem link (evita /movie/"")
+                        // Se não houver ID TMDB, mostra o card sem link 
                         <div key={movie.title || Math.random()} className="flex-shrink-0" role="listitem" aria-label={movie.title}>
                             <Card
                                 title={movie.title}

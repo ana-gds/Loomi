@@ -1,12 +1,7 @@
 /**
  * MovieSummary
  * Exibe a sinopse final do filme.
- * - `overview` pode vir da TMDB (primeira escolha) ou de fallback (Wikipedia/TMDB fallback).
- * - Se não houver overview disponível, mostra uma mensagem de fallback.
- *
- * Props:
- * @param {string|null} overview - Texto da sinopse (já decidido pelo pai)
- * @returns {JSX.Element} Bloco com a sinopse ou mensagem "Sinopse não disponível"
+ *  * - Se não houver overview disponível, mostra uma mensagem de fallback.
  */
 
 export function MovieSummary({ overview }) {
