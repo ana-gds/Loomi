@@ -65,8 +65,8 @@
   position: absolute;
   inset: 0;
   background: url('/src/assets/imgs/Hero/IMG_7616.jpeg') center/cover no-repeat;
-  opacity: 0.20; /* controla a transparência da imagem */
+  opacity: 0.20; 
   pointer-events: none;
-  z-index: -1;  /* fica atrás do conteúdo */
+  z-index: -1;  
 
 }

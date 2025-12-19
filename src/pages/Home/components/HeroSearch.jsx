@@ -8,8 +8,8 @@ import defaultPoster from "../../../assets/imgs/default-movie.png";
  * HeroSearch
  * - Gerir o estado do input (`query`)
  * - Fazer buscas à TMDB com debounce
- * - Mostrar até 3 sugestões em dropdown
- * - Navegar para detalhe ou página de resultados
+ * - Mostra até 3 sugestões em dropdown
+ * - Navega para detalhe ou página de resultados
  */
 
 export function HeroSearch() {
@@ -87,7 +87,7 @@ export function HeroSearch() {
                                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 cursor-pointer transition"
                                 onClick={() => handleSelect(item)}
                             >
-                                {/* Poster (fallback para imagem genérica) */}
+                                {/* Poster */}
                                 <img
                                     src={
                                         item.poster_path || item.profile_path

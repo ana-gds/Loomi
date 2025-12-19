@@ -20,9 +20,9 @@ export function Register() {
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
-    /** ---------------------------------------------
+    /**
      *  REGISTO NORMAL (EMAIL + PASSWORD)
-     * --------------------------------------------- */
+     */
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -70,9 +70,9 @@ export function Register() {
         }
     };
 
-    /** ---------------------------------------------
+    /** 
      *  REGISTO / LOGIN COM GOOGLE
-     * --------------------------------------------- */
+    */
     const handleGoogleRegister = async () => {
         setError("");
         setSubmitting(true);

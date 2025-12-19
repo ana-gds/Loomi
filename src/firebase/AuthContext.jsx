@@ -5,7 +5,7 @@ import { auth } from './firebase';
 /**
  * AuthContext
  * - Fornece `user` (Firebase User | null) e `loading` (quando o auth está a inicializar).
- * - Exporta helpers `loginWithGoogle` e `logout` para serem usados pelos componentes UI.
+ * - Exporta helpers `loginWithGoogle` e `logout` para serem usados pelos componentes.
  */
 
 const AuthContext = createContext({ user: null, loading: true });
@@ -28,8 +28,8 @@ export const AuthProvider = ({ children }) => {
     /**
      * logout
      * Wrapper assíncrono para `signOut` com logging de erro.
-     * Os componentes podem `await logout()` e tratar UI localmente.
-     */
+    */
+
     const logout = async () => {
         try {
             await signOut(auth);
@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }) => {
      * loginWithGoogle
      * Abre o popup do Google e devolve a Promise do Firebase.
      */
+
     const loginWithGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);

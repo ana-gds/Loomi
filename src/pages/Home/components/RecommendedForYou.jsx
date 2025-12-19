@@ -5,129 +5,99 @@ import { SectionTitle } from "../../../components/ui/Title/SectionTitle.jsx";
 import { PinkDiv } from "../../../components/ui/Divs/PinkDiv.jsx";
 import { Card } from "../../../components/ui/Card/Card.jsx";
 import { Link } from "react-router-dom";
-import { TMDB_API_KEY } from "../../../api/tmdb";
-import { TRAKT_API_KEY } from "../../../api/trakt";
+import { getMovieDetails } from "../../../api/tmdb";
+import { getRelatedContent } from "../../../api/trakt";
 import defaultPoster from "../../../assets/imgs/default-movie.png";
 
-
-// 1. Converter TMDB ID → IDs próprios da Trakt
-async function getTraktIdsFromTMDB(tmdbId) {
-    const res = await fetch(
-        `https://api.trakt.tv/search/tmdb/${tmdbId}?type=movie`,
-        {
-            headers: {
-                "Content-Type": "application/json",
-                "trakt-api-version": "2",
-                "trakt-api-key": TRAKT_API_KEY
-            }
-        }
-    );
-
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    return data[0]?.movie?.ids || null;
-}
-
-// 2. Buscar filmes relacionados usando o TRAKT ID correto
-async function getRelatedMovies(traktId) {
-    const res = await fetch(
-        `https://api.trakt.tv/movies/${traktId}/related?limit=5`,
-        {
-            headers: {
-                "Content-Type": "application/json",
-                "trakt-api-version": "2",
-                "trakt-api-key": TRAKT_API_KEY,
-            }
-        }
-    );
-
-    if (!res.ok) return [];
-
-    return await res.json(); // devolve array de filmes Trakt
-}
-
-// 3. Buscar detalhes reais TMDB
-async function getTMDBMovie(id) {
-    const res = await fetch(
-        `https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_API_KEY}&language=pt-PT`
-    );
-    return await res.json();
-}
+/**
+ * RecommendedForYou
+ * Mostra uma secção carrossel com filmes recomendados com base nos favoritos do utilizador.
+ *
+ * Fluxo:
+ * 1. Carrega os IDs dos favoritos do utilizador autenticado.
+ * 2. Para cada favorito, obtém conteúdo relacionado através da API Trakt.
+ * 3. Extrai IDs TMDB dos relacionados, evita duplicados e favoritos.
+ * 4. Busca detalhes dos filmes (máx 10) na TMDB.
+ * 5. Renderiza um carrossel horizontal com Cards clicáveis.
+ */
 
 export function RecommendedForYou() {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
         if (!user) return;
 
         async function loadRecommendations() {
-            // 1. Buscar favoritos (TMDB IDs)
-            const favorites = await getFavorites(user.uid); // => [{ id: 12 }, { id: 98 }]
+            try {
+                // Carregar IDs dos favoritos do utilizador
+                const favorites = await getFavorites(user.uid);
 
-            if (!favorites.length) {
-                setMovies([]);
-                return;
-            }
+                if (!favorites || !favorites.length) {
+                    setMovies([]);
+                    return;
+                }
 
-            let relatedTmdbIds = [];
+                // Construir lista de IDs favoritos para exclusão posterior
+                const favoriteIds = favorites.map((f) => f?.id).filter(Boolean);
+                const relatedIds = new Set();
 
-            // 2. Para cada favorito, converter TMDB → TRAKT ID, depois buscar related
-            for (const fav of favorites) {
-
-                // Converter TMDB → Trakt IDs
-                const ids = await getTraktIdsFromTMDB(fav.id);
-                if (!ids?.trakt) continue;
-
-                // Buscar relacionados (Trakt)
-                const related = await getRelatedMovies(ids.trakt);
-
-                // Guardar TMDB IDs encontrados
-                related.forEach(r => {
-                    if (r?.ids?.tmdb) relatedTmdbIds.push(r.ids.tmdb);
-                });
-            }
-
-// remover duplicados
-            relatedTmdbIds = [...new Set(relatedTmdbIds)];
-
-// remover filmes que já estão nos favoritos
-            const favoriteIds = favorites.map(f => f.id);
-            relatedTmdbIds = relatedTmdbIds.filter(id => !favoriteIds.includes(id));
-
-
-            // 4. Buscar detalhes reais na TMDB
-            const tmdbMovies = await Promise.all(
-                relatedTmdbIds.slice(0, 10).map(async (id) => {
-                    try {
-                        return await getTMDBMovie(id);
-                    } catch {
-                        return null;
+                // Para cada favorito, obter conteúdo relacionado via Trakt
+                for (const fav of favorites) {
+                    if (fav?.id) {
+                        try {
+                            const related = await getRelatedContent(fav.id);
+                            if (related && Array.isArray(related)) {
+                                related.forEach((r) => {
+                                    if (r?.ids?.tmdb) relatedIds.add(r.ids.tmdb);
+                                });
+                            }
+                        } catch (err) {
+                            // Log mas não bloqueia o resto das recomendações
+                            console.warn(`Erro ao obter conteúdo relacionado para ${fav.id}:`, err);
+                        }
                     }
-                })
-            );
+                }
 
-            setMovies(tmdbMovies.filter(Boolean));
+                // Remover filmes que já estão nos favoritos do conjunto de recomendações
+                favoriteIds.forEach((id) => relatedIds.delete(id));
+
+                // Buscar detalhes dos filmes na TMDB
+                const tmdbMovies = await Promise.all(
+                    Array.from(relatedIds).slice(0, 10).map(async (id) => {
+                        try {
+                            return await getMovieDetails(id);
+                        } catch (err) {
+                            console.warn(`Erro ao obter detalhes do filme ${id}:`, err);
+                            return null;
+                        }
+                    })
+                );
+
+                // Filtrar valores null (filmes que falharam) e atualizar estado
+                setMovies(tmdbMovies.filter(Boolean));
+            } catch (err) {
+                // Erro global ao carregar recomendações; esvazia a lista para segurança
+                console.error("Erro ao carregar recomendações:", err);
+                setMovies([]);
+            }
         }
 
         loadRecommendations();
     }, [user]);
 
-    // Caso não tenha favoritos
-    if (!user) return null;
-
-// Não renderiza se não houver user ou recomendações
+    // Oculta a secção se não houver utilizador autenticado ou recomendações
     if (!user || movies.length === 0) return null;
 
-// Renderização normal
     return (
         <section className="ms-20 mt-16">
-            <SectionTitle title="Recomendado para ti"/>
-            <PinkDiv width="w-40"/>
+            <SectionTitle title="Recomendado para ti" />
+            <PinkDiv width="w-40" />
 
+            {/* Carrossel horizontal com scroll, sem scrollbar visível */}
             <div className="flex gap-6 overflow-x-scroll pb-4 pt-2">
                 {movies.map((movie) => (
+                    // Link para página de detalhes do filme
                     <Link key={movie.id} to={`/movie/${movie.id}`}>
                         <Card
                             title={movie.title}

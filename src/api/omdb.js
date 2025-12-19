@@ -1,6 +1,5 @@
 
 export const OMDB_API_KEY = "38d31eac";
-// Mete a tua key diretamente, igual ao teu tmdb.js
 
 const BASE_URL = "https://www.omdbapi.com/";
 

@@ -6,7 +6,7 @@ import { useAuth } from "../../../firebase/AuthContext.jsx";
 /*
   NavBar:
  - controla o estado do menu de perfil (openProfile)
- - permite terminar sessão usando Firebase Auth
+ - permite terminar sessão com Firebase Auth
  - usa useNavigate para redirecionar após o logout
 */
 

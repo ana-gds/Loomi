@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../firebase/AuthContext";
 import { getFavorites } from "../../firebase/favorites";
 import { useNavigate } from "react-router-dom";
-import { TMDB_API_KEY } from "../../api/tmdb";
+import { getMovieDetails } from "../../api/tmdb";
 
 import { SectionTitle } from "../../components/ui/Title/SectionTitle.jsx";
 import { Card } from "../../components/ui/Card/Card.jsx";
@@ -39,12 +39,7 @@ export function Favorites() {
                 }
 
                 // Fazer fetch à TMDB para obter os detalhes — usar allSettled para não falhar tudo
-                const fetches = favDocs.map(({ id }) =>
-                    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_API_KEY}&language=pt-PT`).then((r) => {
-                        if (!r.ok) throw new Error(`TMDB ${r.status}`);
-                        return r.json();
-                    })
-                );
+                const fetches = favDocs.map(({ id }) => getMovieDetails(id));
 
                 const settled = await Promise.allSettled(fetches);
 

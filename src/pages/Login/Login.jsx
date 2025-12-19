@@ -10,17 +10,16 @@ import {GrayDiv} from "../../components/ui/Divs/GrayDiv.jsx";
  * Login page
  * - Permite autenticação por email/password
  * - Permite autenticação via Google (popup)
- *
- * Estados locais:
- * - `email`, `password`: campos do formulário
- * - `error`: mensagem amigável para o utilizador
  */
+
 export function Login() {
     // Campos do formulário
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
     // Mensagem de erro (visível no topo do form)
     const [error, setError] = useState("");
+
     // Estado de submissão para evitar envios duplicados e mostrar feedback
     const [loading, setLoading] = useState(false);
 
@@ -28,17 +27,17 @@ export function Login() {
 
     /**
      * handleLogin
-     * Autentica com email e password usando a SDK do Firebase Auth.
+     * Autentica com email e password, usaa SDK do Firebase Auth.
      * Em caso de sucesso redireciona para a homepage.
-     * Em caso de erro apresenta mensagem genérica (para não expor detalhes sensíveis).
+     * Em caso de erro apresenta mensagem genérica.
      */
     async function handleLogin(e) {
         e.preventDefault();
-        if (loading) return; // evita múltiplos envios
+        if (loading) return; 
         setError("");
         setLoading(true);
 
-        // Normalizar email e remover espaços acidentais
+        // Normalizar email e remover espaços
         const emailTrim = (email || "").trim().toLowerCase();
         const passwordRaw = password || "";
 
@@ -79,7 +78,7 @@ export function Login() {
         } catch (err) {
             const code = err?.code || "";
             if (code === "auth/popup-closed-by-user") {
-                setError(""); // popup fechado pelo utilizador — não é necessário alarmar
+                setError(""); 
             } else {
                 setError("Erro ao entrar com Google. Verifica as definições do popup.");
             }
@@ -96,7 +95,7 @@ export function Login() {
             >
                 <h1 className="text-texto-principal text-2xl text-center font-bold mb-6 mt-4">Iniciar sessão</h1>
 
-                {/* Exibe mensagem de erro amigável quando existe */}
+                {/* Exibe mensagem de erro quando existe */}
                 {error && (
                     <p role="alert" aria-live="assertive" className="text-red-400 text-center mb-3">{error}</p>
                 )}

@@ -34,6 +34,21 @@ export function getMovieDetails(id) {
     return tmdbFetch(`movie/${id}?`);
 }
 
+// VIDEOS / TRAILERS
+export function getMovieVideos(id) {
+    return tmdbFetch(`movie/${id}/videos?`);
+}
+
+// CRÉDITOS
+export function getMovieCredits(id) {
+    return tmdbFetch(`movie/${id}/credits?`);
+}
+
+// PROVIDERS (streaming)
+export function getMovieProviders(id) {
+    return tmdbFetch(`movie/${id}/watch/providers?`);
+}
+
 // PESQUISA
 export function searchMovies(query) {
     return tmdbFetch(`search/movie?query=${encodeURIComponent(query)}`);

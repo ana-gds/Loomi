@@ -3,7 +3,7 @@ export const TRAKT_API_KEY =
 
 export async function getRelatedContent(tmdbId) {
     try {
-        // 1. Lookup TMDB ID → descobrir o Trakt ID REAL do filme
+        // Lookup TMDB ID → descobrir o Trakt ID REAL do filme
         const lookup = await fetch(
             `https://api.trakt.tv/search/tmdb/${tmdbId}?type=movie`,
             {
@@ -21,7 +21,7 @@ export async function getRelatedContent(tmdbId) {
 
         const traktId = movie.ids.trakt;
 
-        // 2. Buscar recomendações de filmes
+        // Buscar recomendações de filmes
         const res = await fetch(
             `https://api.trakt.tv/movies/${traktId}/related`,
             {
@@ -34,7 +34,7 @@ export async function getRelatedContent(tmdbId) {
 
         const related = await res.json();
 
-        // 3. Garantir que só ficam items com TMDB ID válido
+        // Garantir que só ficam items com TMDB ID válido
         return related.filter((r) => r?.ids?.tmdb);
     } catch (err) {
         console.error("Erro em getRelatedContent:", err);

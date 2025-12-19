@@ -6,17 +6,25 @@ import { Link } from "react-router-dom";
 import { getMoviesByGenre } from "../../../api/tmdb";
 import defaultPoster from "../../../assets/imgs/default-movie.png";
 
-
+/**
+ * RomanceMovies
+ * Mostra uma secção carrossel com filmes de romance da TMDB (género ID 10749).
+ */
 export function RomanceMovies() {
     const [movies, setMovies] = useState([]);
 
-
+    // Carregar filmes de romance quando o componente monta
     useEffect(() => {
         async function fetchRomanceMovies() {
-            const data = await getMoviesByGenre(10749);
-            setMovies(data?.results ?? []);
-            console.log(data);
-
+            try {
+                // genre_id 10749 = romance
+                const data = await getMoviesByGenre(10749);
+                // Extrair results ou usar array vazio se não existir
+                setMovies(data?.results ?? []);
+            } catch (err) {
+                console.error("Erro ao carregar filmes de romance:", err);
+                setMovies([]);
+            }
         }
 
         fetchRomanceMovies();
@@ -28,8 +36,10 @@ export function RomanceMovies() {
             <SectionTitle title="Filmes para te apaixonares" />
             <PinkDiv width="w-40" />
 
+            {/* Carrossel horizontal com scroll; renderiza até 10 filmes de romance */}
             <div className="flex gap-6 overflow-x-scroll pb-4 pt-2">
                 {movies.slice(0, 10).map(movie => (
+                    // Link para página de detalhes do filme
                     <Link key={movie.id} to={`/movie/${movie.id}`}>
                         <Card
                             title={movie.title}

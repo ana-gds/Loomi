@@ -6,8 +6,14 @@ import { ButtonPink } from "../../components/ui/Button/ButtonPink.jsx";
 import { doc, setDoc, query, where, collection, getDocs } from "firebase/firestore";
 import {InputL} from "../../components/ui/Input/Input.jsx";
 
+/**
+ * SetupProfile
+ * Página de configuração de perfil para utilizadores recém-registados.
+ * Permite escolher um username único e atualizar o perfil no Firebase Auth e Firestore.
+ */
 export function SetupProfile() {
     const navigate = useNavigate();
+    
     // Estado de autenticação
     const [user, setUser] = useState(null);
     const [loadingUser, setLoadingUser] = useState(true);
@@ -17,7 +23,7 @@ export function SetupProfile() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    // Esperar pelo Firebase auth carregar
+    // Aguardar pelo Firebase auth carregar
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -31,13 +37,15 @@ export function SetupProfile() {
         e.preventDefault();
         setError("");
 
+        // Validação: utilizador autenticado
         if (!user) {
             setError("Nenhum utilizador encontrado.");
             return;
         }
+
         // Normalizar e validar username (4-15 chars, a-z0-9 . _ )
         const clean = (username || "").trim().toLowerCase();
-        const usernamePattern = /^[a-z0-9._]{4,15}$/; // 4-15 caracteres
+        const usernamePattern = /^[a-z0-9._]{4,15}$/; // Regex para validar formato
 
         if (!usernamePattern.test(clean)) {
             setError("O nome de utilizador deve ter 4–15 caracteres; usa letras minúsculas, números, pontos ou underscores.");
@@ -46,7 +54,7 @@ export function SetupProfile() {
 
         setSubmitting(true);
         try {
-            // Verificar se o username já existe 
+            // Verificar se o username já existe no Firestore 
             const q = query(
                 collection(db, "users"),
                 where("username", "==", clean)
@@ -54,24 +62,23 @@ export function SetupProfile() {
             const querySnapshot = await getDocs(q);
 
             if (!querySnapshot.empty) {
-                // Mensagem quando já existe
+                // Username já existe
                 setError("Este nome de utilizador já existe. Escolhe outro.");
                 setSubmitting(false);
                 return;
             }
 
-            // Atualizar displayName no Auth
+            // Atualizar displayName no Firebase Auth 
             await updateProfile(user, {
                 displayName: clean
             });
 
-            // Guardar no firestore com o documento do utilizador
+            // Guardar documento do utilizador no Firestore com username e email
             await setDoc(doc(db, "users", user.uid), {
                 username: clean,
                 email: user.email
             });
 
-            // Navega para a homepage após sucesso
             navigate("/");
 
         } catch (err) {
@@ -90,6 +97,7 @@ export function SetupProfile() {
         }
     }
 
+    // Mostra loading enquanto aguarda o Firebase Auth carregar
     if (loadingUser) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-secundario">
@@ -108,10 +116,12 @@ export function SetupProfile() {
                     Completar Perfil
                 </h1>
 
+                {/* Mensagem de erro*/}
                 {error && (
                     <p role="alert" aria-live="assertive" className="text-red-400 text-center mb-4">{error}</p>
                 )}
 
+                {/* Campo de username */}
                 <label htmlFor="username" className="text-texto-principal">Nome de utilizador</label>
                 <InputL
                     id="username"
@@ -124,8 +134,10 @@ export function SetupProfile() {
                     aria-describedby="usernameHelp"
                     required
                 />
+                {/* Texto de ajuda */}
                 <p id="usernameHelp" className="text-xs text-texto-secundario mt-2">4–15 caracteres: letras minúsculas, números, pontos ou underscores.</p>
 
+                {/* Botão de submit */}
                 <ButtonPink
                     type="submit"
                     ClassNames="mt-9 mb-4 w-full"
